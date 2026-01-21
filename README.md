@@ -1,14 +1,15 @@
 # Temporal Early Warning of Sepsis Deterioration in ICU Patients
 
 ## Overview
-This project focuses on the formulation of an early warning system for sepsis deterioration in intensive care unit (ICU) patients using longitudinal clinical data.
-Rather than retrospective detection, the task is framed as prospective risk prediction within a fixed future time horizon, emphasizing temporal structure and clinical relevance.
+This project implements a prospective, patient-level early warning system for predicting imminent sepsis deterioration in ICU patients using high-frequency longitudinal clinical data.
 
-The project is designed as a research-oriented implementation, prioritizing problem formulation and methodological clarity over performance optimization.
+Rather than retrospective sepsis detection, the task is formulated as time-dependent risk prediction within a fixed future horizon.
 
 ## Problem Formulation
-Given multivariate clinical measurements collected hourly for ICU patients, the objective is to predict whether a patient will experience clinical deterioration related to sepsis within a predefined future window.
 
+At each ICU hour t, the model predicts whether a patient will develop sepsis within the next 6 hours, without using any post-onset information.
+
+Labels are constructed prospectively to reflect a realistic clinical early warning scenario.
 This formulation highlights:
 - Temporal dependency across observations
 - Explicit definition of prediction horizon
@@ -22,26 +23,29 @@ This formulation highlights:
 
 ## Methodology
 The analysis pipeline includes:
-- Data preprocessing and temporal alignment
-- Feature aggregation over fixed time windows
-- Baseline predictive modeling using classical machine learning methods
-- Evaluation using prospective metrics appropriate for early warning systems
+- Source: PhysioNet Sepsis Challenge dataset
+- Resolution: Hourly ICU measurements
+- Cohort split: Patient-level train/test separation
 
-The implementation is intentionally modular to allow future extension to more advanced temporal or state-based models.
+## Modeling Approach
+- Algorithm: LightGBM (gradient-boosted decision trees)
+- Missing data: Median imputation (train-only)
+- Class imbalance: Native LightGBM handling
+- Evaluation: AUROC, PR-AUC, recall-oriented thresholding
 
-## Evaluation
-Model performance is evaluated using:
-- AUROC
-- Precision-recall metrics
+## Results 
+- AUROC: ~0.65
+- PR-AUC: Low, reflecting extreme outcome imbalance
+- Thresholds chosen to prioritize sensitivity, consistent with early warning objectives
 
-Results are interpreted with caution, as the primary aim of the project is methodological exploration rather than benchmark performance.
+## Interpretability
 
-## Limitations and Future Work
-- No explicit state-space or trajectory modeling
-- No survival analysis or hazard-based approaches
-- No integration of multi-modal or single-cell data
+Global and local explanations are generated using SHAP to identify dominant physiological drivers of short-term sepsis risk.
 
-Future extensions may include trajectory-based modeling, probabilistic temporal methods, and application to richer biological datasets.
+## Limitations
+- Single-horizon prediction
+- No explicit temporal feature engineering
+- No external validation
 
-## Notes
-This project serves as a foundation for further research into temporal modeling and method development in biomedical data science.
+## Purpose
+This repository is intended as a research-oriented implementation demonstrating correct temporal framing, leakage avoidance, and clinically grounded evaluation for early warning modeling.
