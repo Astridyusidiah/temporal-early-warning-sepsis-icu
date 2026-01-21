@@ -1,49 +1,47 @@
 # Temporal Early Warning of Sepsis Deterioration in ICU Patients
 
 ## Overview
-This repository presents a patient-level early warning system for predicting sepsis deterioration in intensive care unit (ICU) patients using longitudinal clinical data. The task is formulated as prospective risk prediction within a fixed future time horizon, rather than retrospective sepsis detection.
+This project focuses on the formulation of an early warning system for sepsis deterioration in intensive care unit (ICU) patients using longitudinal clinical data.
+Rather than retrospective detection, the task is framed as prospective risk prediction within a fixed future time horizon, emphasizing temporal structure and clinical relevance.
 
-The project is intended as a research-oriented implementation aligned with PhD-level standards in health data science and clinical machine learning.
+The project is designed as a research-oriented implementation, prioritizing problem formulation and methodological clarity over performance optimization.
 
 ## Problem Formulation
-At each ICU time point, the model estimates the probability that a patient will develop sepsis within the next H hours, given currently available clinical information. Predictions are evaluated at the patient level to avoid temporal and cross-patient data leakage.
+Given multivariate clinical measurements collected hourly for ICU patients, the objective is to predict whether a patient will experience clinical deterioration related to sepsis within a predefined future window.
 
-## Methodological Pipeline
-The analysis follows the steps below:
+This formulation highlights:
+- Temporal dependency across observations
+- Explicit definition of prediction horizon
+- Avoidance of label leakage common in retrospective setups
 
-1. Data ingestion and structural inspection  
-2. Temporal alignment and patient-level ordering  
-3. Prospective early warning label construction  
-4. Feature definition and cohort construction  
-5. Patient-level train–test partitioning  
-6. Missing-value imputation and feature preparation  
-7. Gradient boosted tree model development  
-8. Discriminative performance evaluation  
-9. Global model interpretability analysis  
-10. Local explanation of individual risk states  
-11. Threshold-based clinical decision analysis (baseline)  
-12. Clinical utility and risk stratification analysis  
+## Dataset
+- Source: PhysioNet Sepsis Challenge dataset
+- Data type: Multivariate time-series (hourly ICU measurements)
+- Features include vital signs and laboratory values
+- Missingness is handled using simple imputation strategies suitable for baseline modeling
 
-## Model and Evaluation
-A gradient boosted decision tree model (LightGBM) is trained using patient-level splits. Performance is assessed using AUROC and precision–recall metrics due to strong class imbalance.
+## Methodology
+The analysis pipeline includes:
+- Data preprocessing and temporal alignment
+- Feature aggregation over fixed time windows
+- Baseline predictive modeling using classical machine learning methods
+- Evaluation using prospective metrics appropriate for early warning systems
 
-Rather than relying on a single decision threshold, predicted risk scores are further evaluated through risk stratification to assess potential clinical utility for prioritization and early intervention.
+The implementation is intentionally modular to allow future extension to more advanced temporal or state-based models.
 
-## Key results
-- Global feature importance (SHAP bar):  
-  [`figures/shap_global_bar.png`](figures/shap_global_bar.png)
+## Evaluation
+Model performance is evaluated using:
+- AUROC
+- Precision-recall metrics
 
-- Global SHAP distribution (beeswarm):  
-  [`figures/shap_global_beeswarm.png`](figures/shap_global_beeswarm.png)
+Results are interpreted with caution, as the primary aim of the project is methodological exploration rather than benchmark performance.
 
-- Local explanation (highest-risk patient):  
-  [`figures/shap_local_highest_risk.png`](figures/shap_local_highest_risk.png)
+## Limitations and Future Work
+- No explicit state-space or trajectory modeling
+- No survival analysis or hazard-based approaches
+- No integration of multi-modal or single-cell data
 
+Future extensions may include trajectory-based modeling, probabilistic temporal methods, and application to richer biological datasets.
 
-## Repository Structure
-- `notebooks/` — full analysis pipeline  
-- `figures/` — key evaluation and interpretability figures  
-- `README.md` — project overview and methodology  
-
-## Disclaimer
-This project is intended for research and educational purposes only and does not constitute a clinical decision support system.
+## Notes
+This project serves as a foundation for further research into temporal modeling and method development in biomedical data science.
